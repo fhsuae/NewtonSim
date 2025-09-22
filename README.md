@@ -70,3 +70,5 @@ Physics:
 
 Inspiration:
 * [PhET Interactive Simulations, University of Colorado Boulder](https://phet.colorado.edu/)
+* [Simple Physics Simulation with Pygame (idgmatrix repository)](https://github.com/idgmatrix/pygame-physics)
+* [Animate Dynamics of Cart-Pendulum System in Python by Using Pygame](https://github.com/AleksandarHaber/Simulation-and-Animation-of-Cart-Pole-State-Space-Model-in-Python-and-Pygame)
