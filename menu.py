@@ -28,9 +28,10 @@ class Menu:
         self.screen = screen
         self.font = pygame.font.SysFont("Arial", 36)
 
-        # define buttons
-        self.pendulum_button = Button((300, 250, 200, 60), "Pendulum", self.font)
-        self.quit_button = Button((300, 350, 200, 60), "Quit", self.font)
+        # Defines the buttons
+        self.pendulum_button = Button((300, 220, 200, 60), "Pendulum", self.font)
+        self.spring_button   = Button((300, 300, 200, 60), "Spring",   self.font)
+        self.quit_button     = Button((300, 380, 200, 60), "Quit",     self.font)
 
     def run(self):
         while True:
@@ -38,8 +39,9 @@ class Menu:
             title = self.font.render("Physics Simulator", True, (0, 0, 0))
             self.screen.blit(title, (250, 100))
 
-            # draw buttons
+            # draws the buttons
             self.pendulum_button.draw(self.screen)
+            self.spring_button.draw(self.screen)
             self.quit_button.draw(self.screen)
 
             pygame.display.flip()
@@ -49,5 +51,7 @@ class Menu:
                     return "quit"
                 if self.pendulum_button.is_clicked(event):
                     return "pendulum"
+                if self.spring_button.is_clicked(event):
+                    return "spring"
                 if self.quit_button.is_clicked(event):
                     return "quit"

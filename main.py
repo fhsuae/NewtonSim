@@ -1,6 +1,7 @@
 import pygame
 from menu import Menu
 from problems.pendulum import PendulumSim
+from problems.spring import SpringSim
 
 def main():
     pygame.init()
@@ -14,6 +15,9 @@ def main():
         choice = menu.run()
         if choice == "pendulum":
             sim = PendulumSim(screen)
+            sim.run()
+        elif choice == "spring":
+            sim = SpringSim(screen)
             sim.run()
         elif choice == "quit":
             running = False

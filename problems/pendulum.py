@@ -6,8 +6,6 @@ class PendulumSim:
         self.screen = screen
         self.clock = pygame.time.Clock()
         self.running = True
-
-        # pendulum params
         self.origin = (400, 100)
         self.length = 200
         self.angle = math.pi / 4
@@ -30,7 +28,6 @@ class PendulumSim:
                 self.running = False
 
     def update(self):
-        # simple physics: d²θ/dt² = -(g/L) sinθ
         self.alpha = -(self.g / self.length) * math.sin(self.angle)
         self.omega += self.alpha
         self.angle += self.omega * 0.05  # step size
@@ -40,8 +37,6 @@ class PendulumSim:
 
         bob_x = self.origin[0] + self.length * math.sin(self.angle)
         bob_y = self.origin[1] + self.length * math.cos(self.angle)
-
         pygame.draw.line(self.screen, (0, 0, 0), self.origin, (bob_x, bob_y), 2)
         pygame.draw.circle(self.screen, (200, 0, 0), (int(bob_x), int(bob_y)), 20)
-
         pygame.display.flip()
