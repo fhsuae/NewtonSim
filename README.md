@@ -63,6 +63,7 @@ Inspiration, code snippets, etc.
 Programming:
 * [Pygame Documentation](https://www.pygame.org/docs/)
 * [Python Standard Library](https://docs.python.org/3/library/)
+* [Pygame Physics Simulation by Peter Collingridge](https://www.petercollingridge.co.uk/tutorials/pygame-physics-simulation/drawing-circles/)
 
 Physics:
 * [OpenStax University Physics Volume 1](https://openstax.org/details/books/university-physics-volume-1)
