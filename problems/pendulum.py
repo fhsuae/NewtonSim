@@ -13,6 +13,8 @@ class PendulumSim:
         self.alpha = 0
         self.g = 9.81
 
+        self.font = pygame.font.SysFont(None, 30)
+
     def run(self):
         while self.running:
             self.clock.tick(60)
@@ -39,4 +41,7 @@ class PendulumSim:
         bob_y = self.origin[1] + self.length * math.cos(self.angle)
         pygame.draw.line(self.screen, (0, 0, 0), self.origin, (bob_x, bob_y), 2)
         pygame.draw.circle(self.screen, (200, 0, 0), (int(bob_x), int(bob_y)), 20)
+
+        text_surface = self.font.render("Press ESC to return to menu", True, (0, 0, 0))
+        self.screen.blit(text_surface, (10, 10))  # Top-left corner
         pygame.display.flip()
