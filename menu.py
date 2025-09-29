@@ -8,20 +8,24 @@ class Button:
         self.bg_color = bg_color
         self.hover_color = hover_color
         self.text_color = text_color
-        self.is_hovered = False  # track hover state
+        self.current_color = bg_color  # start with normal color
 
     def draw(self, screen):
-        # Change color if hovered
-        color = self.hover_color if self.is_hovered else self.bg_color
-        pygame.draw.rect(screen, color, self.rect)
-        pygame.draw.rect(screen, (0, 0, 0), self.rect, 2)  # border
+        pygame.draw.rect(screen, self.current_color, self.rect)
+        pygame.draw.rect(screen, (0, 0, 0), self.rect, 2)
 
         text_surf = self.font.render(self.text, True, self.text_color)
         text_rect = text_surf.get_rect(center=self.rect.center)
         screen.blit(text_surf, text_rect)
 
     def update_hover(self, mouse_pos):
-        self.is_hovered = self.rect.collidepoint(mouse_pos)
+        # Determine target color
+        target_color = self.hover_color if self.rect.collidepoint(mouse_pos) else self.bg_color
+        # Smoothly interpolate each RGB channel
+        self.current_color = tuple(
+            int(self.current_color[i] + (target_color[i] - self.current_color[i]) * 0.2)
+            for i in range(3)
+        )
 
     def is_clicked(self, event):
         return (
@@ -29,6 +33,7 @@ class Button:
             and event.button == 1
             and self.rect.collidepoint(event.pos)
         )
+
 
 
 
@@ -53,7 +58,6 @@ class Menu:
             self.spring_button.update_hover(mouse_pos)
             self.quit_button.update_hover(mouse_pos)
 
-            # Draw buttons
             self.pendulum_button.draw(self.screen)
             self.spring_button.draw(self.screen)
             self.quit_button.draw(self.screen)
@@ -69,4 +73,3 @@ class Menu:
                     return "spring"
                 if self.quit_button.is_clicked(event):
                     return "quit"
-
