@@ -8,24 +8,33 @@ class Button:
         self.bg_color = bg_color
         self.hover_color = hover_color
         self.text_color = text_color
-        self.current_color = bg_color  # start with normal color
+        self.current_color = bg_color
+        self.hovered = False
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.current_color, self.rect)
-        pygame.draw.rect(screen, (0, 0, 0), self.rect, 2)
-
-        text_surf = self.font.render(self.text, True, self.text_color)
-        text_rect = text_surf.get_rect(center=self.rect.center)
-        screen.blit(text_surf, text_rect)
-
-    def update_hover(self, mouse_pos):
-        # Determine target color
-        target_color = self.hover_color if self.rect.collidepoint(mouse_pos) else self.bg_color
-        # Smoothly interpolate each RGB channel
+        # Smooth color transition
+        target_color = self.hover_color if self.hovered else self.bg_color
         self.current_color = tuple(
             int(self.current_color[i] + (target_color[i] - self.current_color[i]) * 0.2)
             for i in range(3)
         )
+
+        # Simple size increase when hovered
+        scale = 1.1 if self.hovered else 1.0
+        scaled_rect = self.rect.copy()
+        scaled_rect.width = int(self.rect.width * scale)
+        scaled_rect.height = int(self.rect.height * scale)
+        scaled_rect.center = self.rect.center
+
+        pygame.draw.rect(screen, self.current_color, scaled_rect)
+        pygame.draw.rect(screen, (0, 0, 0), scaled_rect, 2)
+
+        text_surf = self.font.render(self.text, True, self.text_color)
+        text_rect = text_surf.get_rect(center=scaled_rect.center)
+        screen.blit(text_surf, text_rect)
+
+    def update_hover(self, mouse_pos):
+        self.hovered = self.rect.collidepoint(mouse_pos)
 
     def is_clicked(self, event):
         return (
@@ -33,6 +42,7 @@ class Button:
             and event.button == 1
             and self.rect.collidepoint(event.pos)
         )
+
 
 
 
