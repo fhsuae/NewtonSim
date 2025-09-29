@@ -1,19 +1,27 @@
 import pygame
 
 class Button:
-    def __init__(self, rect, text, font, bg_color=(180, 180, 180), text_color=(0, 0, 0)):
+    def __init__(self, rect, text, font, bg_color=(180, 180, 180), hover_color=(220, 220, 220), text_color=(0, 0, 0)):
         self.rect = pygame.Rect(rect)
         self.text = text
         self.font = font
         self.bg_color = bg_color
+        self.hover_color = hover_color
         self.text_color = text_color
+        self.is_hovered = False  # track hover state
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.bg_color, self.rect)
+        # Change color if hovered
+        color = self.hover_color if self.is_hovered else self.bg_color
+        pygame.draw.rect(screen, color, self.rect)
         pygame.draw.rect(screen, (0, 0, 0), self.rect, 2)  # border
+
         text_surf = self.font.render(self.text, True, self.text_color)
         text_rect = text_surf.get_rect(center=self.rect.center)
         screen.blit(text_surf, text_rect)
+
+    def update_hover(self, mouse_pos):
+        self.is_hovered = self.rect.collidepoint(mouse_pos)
 
     def is_clicked(self, event):
         return (
@@ -21,6 +29,7 @@ class Button:
             and event.button == 1
             and self.rect.collidepoint(event.pos)
         )
+
 
 
 class Menu:
@@ -39,7 +48,12 @@ class Menu:
             title = self.font.render("Physics Simulator", True, (0, 0, 0))
             self.screen.blit(title, (250, 100))
 
-            # draws the buttons
+            mouse_pos = pygame.mouse.get_pos()
+            self.pendulum_button.update_hover(mouse_pos)
+            self.spring_button.update_hover(mouse_pos)
+            self.quit_button.update_hover(mouse_pos)
+
+            # Draw buttons
             self.pendulum_button.draw(self.screen)
             self.spring_button.draw(self.screen)
             self.quit_button.draw(self.screen)
@@ -55,3 +69,4 @@ class Menu:
                     return "spring"
                 if self.quit_button.is_clicked(event):
                     return "quit"
+

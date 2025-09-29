@@ -1,9 +1,6 @@
 import pygame
-import math
 
 class SpringSim:
-
-
     def __init__(self, screen):
         self.screen = screen
         self.clock = pygame.time.Clock()
@@ -18,6 +15,7 @@ class SpringSim:
         self.k = 20.0
         self.m = 1.0
 
+        self.dragging = False  # new
         self.font = pygame.font.SysFont("Arial", 18)
 
     def run(self):
@@ -28,18 +26,30 @@ class SpringSim:
             self.draw()
 
     def handle_events(self):
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        mass_x = int(self.anchor[0] + self.rest_length + self.pos)
+        mass_y = self.anchor[1]
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    self.running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if abs(mouse_x - mass_x) < self.mass_radius and abs(mouse_y - mass_y) < self.mass_radius:
+                    self.dragging = True
+                    self.v = 0
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.dragging = False
+
+        if self.dragging:
+            self.pos = mouse_x - self.anchor[0] - self.rest_length
 
     def update(self, dt):
-
-        a = -self.k * self.pos / self.m
-        self.v += a * dt
-        self.pos += self.v * dt
+        if not self.dragging:
+            a = -self.k * self.pos / self.m
+            self.v += a * dt
+            self.pos += self.v * dt
 
     def draw(self):
         self.screen.fill((255, 255, 255))
