@@ -12,7 +12,7 @@ class Button:
         self.hovered = False
 
     def draw(self, screen):
-        # Smooth color transition
+        #  color transtion
         target_color = self.hover_color if self.hovered else self.bg_color
         self.current_color = tuple(
             int(self.current_color[i] + (target_color[i] - self.current_color[i]) * 0.2)
@@ -44,15 +44,11 @@ class Button:
         )
 
 
-
-
-
 class Menu:
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.SysFont("Arial", 36)
 
-        # Defines the buttons
         self.pendulum_button = Button((300, 220, 200, 60), "Pendulum", self.font)
         self.spring_button   = Button((300, 300, 200, 60), "Spring",   self.font)
         self.quit_button     = Button((300, 380, 200, 60), "Quit",     self.font)
