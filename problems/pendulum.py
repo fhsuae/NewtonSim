@@ -36,14 +36,11 @@ class PendulumSim:
         self.clock = pygame.time.Clock()
         self.running = True
         self.font = pygame.font.SysFont(None, 30)
-
         self.origin = (400, 100)
         self.length = 200
         self.g = 9.81
-
         self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
         self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
-
         self.reset()
 
     def reset(self):
@@ -51,6 +48,7 @@ class PendulumSim:
         self.omega = 0
         self.alpha = 0
         self.dragging = False
+        self.m = 1.0
 
     def run(self):
         while self.running:
@@ -64,7 +62,6 @@ class PendulumSim:
         bob_x = self.origin[0] + self.length * math.sin(self.angle)
         bob_y = self.origin[1] + self.length * math.cos(self.angle)
         reset_rect = pygame.Rect(700, 10, 80, 30)
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -78,10 +75,8 @@ class PendulumSim:
                     self.reset()
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.dragging = False
-
             self.speed_slider.handle_event(event)
             self.resistance_slider.handle_event(event)
-
         if self.dragging:
             dx = mouse_x - self.origin[0]
             dy = mouse_y - self.origin[1]
@@ -89,7 +84,7 @@ class PendulumSim:
 
     def update(self, dt):
         dt *= self.speed_slider.value
-        timestep = 7.5  # increased from 0.05 for normal speed
+        timestep = 7.5
         if not self.dragging:
             b = self.resistance_slider.value
             self.alpha = -(self.g / self.length) * math.sin(self.angle) - b * self.omega
@@ -102,16 +97,18 @@ class PendulumSim:
         bob_y = self.origin[1] + self.length * math.cos(self.angle)
         pygame.draw.line(self.screen, (0, 0, 0), self.origin, (bob_x, bob_y), 2)
         pygame.draw.circle(self.screen, (200, 0, 0), (int(bob_x), int(bob_y)), 20)
-
         self.speed_slider.draw(self.screen)
         self.resistance_slider.draw(self.screen)
-
         reset_rect = pygame.Rect(700, 10, 80, 30)
         pygame.draw.rect(self.screen, (220, 100, 100), reset_rect)
         text = self.font.render("Reset", True, (255, 255, 255))
         self.screen.blit(text, (reset_rect.x + 12, reset_rect.y + 5))
-
+        KE = 0.5 * self.m * (self.omega * self.length)**2
+        PE = self.m * self.g * self.length * (1 - math.cos(self.angle))
+        ke_text = self.font.render(f"KE: {KE:.2f} J", True, (0, 0, 0))
+        pe_text = self.font.render(f"PE: {PE:.2f} J", True, (0, 0, 0))
+        self.screen.blit(ke_text, (10, 40))
+        self.screen.blit(pe_text, (10, 70))
         msg = self.font.render("Press ESC to return to menu", True, (0, 0, 0))
         self.screen.blit(msg, (10, 10))
-
         pygame.display.flip()
