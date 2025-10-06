@@ -1,17 +1,21 @@
 import pygame
 
 class Slider:
-    def __init__(self, x, y, width, min_val=0.1, max_val=2.0, initial=1.0):
+    def __init__(self, x, y, width, min_val=0.0, max_val=2.0, initial=0.1, label=""):
         self.rect = pygame.Rect(x, y, width, 20)
         self.min_val = min_val
         self.max_val = max_val
         self.value = initial
         self.handle_pos = x + (initial - min_val) / (max_val - min_val) * width
         self.dragging = False
+        self.label = label
+        self.font = pygame.font.SysFont("Arial", 18)
 
     def draw(self, screen):
         pygame.draw.rect(screen, (150, 150, 150), self.rect)
         pygame.draw.circle(screen, (50, 50, 200), (int(self.handle_pos), self.rect.centery), 10)
+        text = self.font.render(f"{self.label}: {self.value:.2f}", True, (0, 0, 0))
+        screen.blit(text, (self.rect.x, self.rect.y - 25))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -41,7 +45,8 @@ class SpringSim:
 
         self.dragging = False
         self.font = pygame.font.SysFont("Arial", 18)
-        self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0)
+        self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
+        self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
 
     def run(self):
         while self.running:
@@ -68,6 +73,7 @@ class SpringSim:
                 self.dragging = False
 
             self.speed_slider.handle_event(event)
+            self.resistance_slider.handle_event(event)
 
         if self.dragging:
             self.pos = mouse_x - self.anchor[0] - self.rest_length
@@ -75,7 +81,8 @@ class SpringSim:
     def update(self, dt):
         dt *= self.speed_slider.value
         if not self.dragging:
-            a = -self.k * self.pos / self.m
+            c = self.resistance_slider.value
+            a = (-self.k * self.pos - c * self.v) / self.m
             self.v += a * dt
             self.pos += self.v * dt
 
@@ -91,8 +98,7 @@ class SpringSim:
         pygame.draw.circle(self.screen, (0, 100, 200), (mass_x, mass_y), self.mass_radius)
 
         self.speed_slider.draw(self.screen)
-        speed_text = self.font.render(f"Speed: {self.speed_slider.value:.2f}", True, (0, 0, 0))
-        self.screen.blit(speed_text, (300, 550))
+        self.resistance_slider.draw(self.screen)
 
         text = self.font.render("Press ESC to return to the menu.", True, (0, 0, 0))
         self.screen.blit(text, (10, 10))

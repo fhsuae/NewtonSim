@@ -19,7 +19,7 @@ class Button:
             for i in range(3)
         )
 
-        # Simple size increase when hovered
+        #  Size increase when hovered
         scale = 1.1 if self.hovered else 1.0
         scaled_rect = self.rect.copy()
         scaled_rect.width = int(self.rect.width * scale)

@@ -2,17 +2,21 @@ import pygame
 import math
 
 class Slider:
-    def __init__(self, x, y, width, min_val=0.1, max_val=2.0, initial=1.0):
+    def __init__(self, x, y, width, min_val=0.0, max_val=2.0, initial=0.1, label=""):
         self.rect = pygame.Rect(x, y, width, 20)
         self.min_val = min_val
         self.max_val = max_val
         self.value = initial
         self.handle_pos = x + (initial - min_val) / (max_val - min_val) * width
         self.dragging = False
+        self.label = label
+        self.font = pygame.font.SysFont("Arial", 18)
 
     def draw(self, screen):
         pygame.draw.rect(screen, (150, 150, 150), self.rect)
         pygame.draw.circle(screen, (50, 50, 200), (int(self.handle_pos), self.rect.centery), 10)
+        text = self.font.render(f"{self.label}: {self.value:.2f}", True, (0, 0, 0))
+        screen.blit(text, (self.rect.x, self.rect.y - 25))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -39,13 +43,14 @@ class PendulumSim:
 
         self.dragging = False
         self.font = pygame.font.SysFont(None, 30)
-        self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0)
+        self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
+        self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
 
     def run(self):
         while self.running:
             dt = self.clock.tick(60) / 1000.0
             self.handle_events()
-            self.update()
+            self.update(dt)
             self.draw()
 
     def handle_events(self):
@@ -66,18 +71,20 @@ class PendulumSim:
                 self.dragging = False
 
             self.speed_slider.handle_event(event)
+            self.resistance_slider.handle_event(event)
 
         if self.dragging:
             dx = mouse_x - self.origin[0]
             dy = mouse_y - self.origin[1]
             self.angle = math.atan2(dx, dy)
 
-    def update(self):
-        speed = self.speed_slider.value
+    def update(self, dt):
+        dt *= self.speed_slider.value
         if not self.dragging:
-            self.alpha = -(self.g / self.length) * math.sin(self.angle)
-            self.omega += self.alpha * 0.05 * speed
-            self.angle += self.omega * 0.05 * speed
+            b = self.resistance_slider.value
+            self.alpha = -(self.g / self.length) * math.sin(self.angle) - b * self.omega
+            self.omega += self.alpha * dt
+            self.angle += self.omega * dt
 
     def draw(self):
         self.screen.fill((255, 255, 255))
@@ -87,10 +94,9 @@ class PendulumSim:
         pygame.draw.circle(self.screen, (200, 0, 0), (int(bob_x), int(bob_y)), 20)
 
         self.speed_slider.draw(self.screen)
+        self.resistance_slider.draw(self.screen)
 
         text_surface = self.font.render("Press ESC to return to menu", True, (0, 0, 0))
         self.screen.blit(text_surface, (10, 10))
-        speed_text = self.font.render(f"Speed: {self.speed_slider.value:.2f}", True, (0, 0, 0))
-        self.screen.blit(speed_text, (300, 550))
 
         pygame.display.flip()
