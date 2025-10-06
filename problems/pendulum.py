@@ -87,7 +87,7 @@ class PendulumSim:
 
     def update(self, dt):
         dt *= self.speed_slider.value
-        timestep = 0.15
+        timestep = 7.5
         if not self.dragging:
             b = self.resistance_slider.value
             self.alpha = -(self.g / self.length) * math.sin(self.angle) - b * self.omega
