@@ -41,6 +41,7 @@ class PendulumSim:
         self.g = 9.81
         self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
         self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
+        self.mass_slider = Slider(550, 550, 200, 0.1, 5.0, 1.0, label="Mass")
         self.reset()
 
     def reset(self):
@@ -48,7 +49,7 @@ class PendulumSim:
         self.omega = 0
         self.alpha = 0
         self.dragging = False
-        self.m = 1.0
+        self.m = self.mass_slider.value
 
     def run(self):
         while self.running:
@@ -77,6 +78,8 @@ class PendulumSim:
                 self.dragging = False
             self.speed_slider.handle_event(event)
             self.resistance_slider.handle_event(event)
+            self.mass_slider.handle_event(event)
+            self.m = self.mass_slider.value
         if self.dragging:
             dx = mouse_x - self.origin[0]
             dy = mouse_y - self.origin[1]
@@ -84,7 +87,7 @@ class PendulumSim:
 
     def update(self, dt):
         dt *= self.speed_slider.value
-        timestep = 7.5
+        timestep = 0.15
         if not self.dragging:
             b = self.resistance_slider.value
             self.alpha = -(self.g / self.length) * math.sin(self.angle) - b * self.omega
@@ -99,6 +102,7 @@ class PendulumSim:
         pygame.draw.circle(self.screen, (200, 0, 0), (int(bob_x), int(bob_y)), 20)
         self.speed_slider.draw(self.screen)
         self.resistance_slider.draw(self.screen)
+        self.mass_slider.draw(self.screen)
         reset_rect = pygame.Rect(700, 10, 80, 30)
         pygame.draw.rect(self.screen, (220, 100, 100), reset_rect)
         text = self.font.render("Reset", True, (255, 255, 255))
