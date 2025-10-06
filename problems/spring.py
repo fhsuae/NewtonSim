@@ -96,18 +96,15 @@ class SpringSim:
     def draw(self):
         self.screen.fill((255, 255, 255))
 
-        # Spring anchor and mass
         pygame.draw.rect(self.screen, (120, 120, 120), (self.anchor[0] - 10, self.anchor[1] - 40, 20, 80))
         mass_x = int(self.anchor[0] + self.rest_length + self.pos)
         mass_y = self.anchor[1]
         pygame.draw.line(self.screen, (0, 0, 0), self.anchor, (mass_x, mass_y), 3)
         pygame.draw.circle(self.screen, (0, 100, 200), (mass_x, mass_y), self.mass_radius)
 
-        # UI elements
         self.speed_slider.draw(self.screen)
         self.resistance_slider.draw(self.screen)
 
-        # Reset button
         reset_rect = pygame.Rect(700, 10, 80, 30)
         pygame.draw.rect(self.screen, (220, 100, 100), reset_rect)
         text = self.font.render("Reset", True, (255, 255, 255))

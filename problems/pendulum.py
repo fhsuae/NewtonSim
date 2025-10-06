@@ -89,11 +89,12 @@ class PendulumSim:
 
     def update(self, dt):
         dt *= self.speed_slider.value
+        timestep = 7.5  # increased from 0.05 for normal speed
         if not self.dragging:
             b = self.resistance_slider.value
             self.alpha = -(self.g / self.length) * math.sin(self.angle) - b * self.omega
-            self.omega += self.alpha * dt
-            self.angle += self.omega * dt
+            self.omega += self.alpha * timestep * dt
+            self.angle += self.omega * timestep * dt
 
     def draw(self):
         self.screen.fill((255, 255, 255))
@@ -102,11 +103,9 @@ class PendulumSim:
         pygame.draw.line(self.screen, (0, 0, 0), self.origin, (bob_x, bob_y), 2)
         pygame.draw.circle(self.screen, (200, 0, 0), (int(bob_x), int(bob_y)), 20)
 
-        # Sliders
         self.speed_slider.draw(self.screen)
         self.resistance_slider.draw(self.screen)
 
-        # Reset button
         reset_rect = pygame.Rect(700, 10, 80, 30)
         pygame.draw.rect(self.screen, (220, 100, 100), reset_rect)
         text = self.font.render("Reset", True, (255, 255, 255))
