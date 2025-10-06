@@ -20,7 +20,7 @@ class Slider:
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if pygame.Rect(self.handle_pos-10, self.rect.centery-10, 20, 20).collidepoint(event.pos):
+            if pygame.Rect(self.handle_pos - 10, self.rect.centery - 10, 20, 20).collidepoint(event.pos):
                 self.dragging = True
         elif event.type == pygame.MOUSEBUTTONUP:
             self.dragging = False
@@ -29,22 +29,28 @@ class Slider:
             t = (self.handle_pos - self.rect.left) / self.rect.width
             self.value = self.min_val + t * (self.max_val - self.min_val)
 
+
 class PendulumSim:
     def __init__(self, screen):
         self.screen = screen
         self.clock = pygame.time.Clock()
         self.running = True
+        self.font = pygame.font.SysFont(None, 30)
+
         self.origin = (400, 100)
         self.length = 200
+        self.g = 9.81
+
+        self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
+        self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
+
+        self.reset()
+
+    def reset(self):
         self.angle = math.pi / 4
         self.omega = 0
         self.alpha = 0
-        self.g = 9.81
-
         self.dragging = False
-        self.font = pygame.font.SysFont(None, 30)
-        self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
-        self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
 
     def run(self):
         while self.running:
@@ -57,6 +63,7 @@ class PendulumSim:
         mouse_x, mouse_y = pygame.mouse.get_pos()
         bob_x = self.origin[0] + self.length * math.sin(self.angle)
         bob_y = self.origin[1] + self.length * math.cos(self.angle)
+        reset_rect = pygame.Rect(700, 10, 80, 30)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -67,6 +74,8 @@ class PendulumSim:
                 if math.hypot(mouse_x - bob_x, mouse_y - bob_y) < 20:
                     self.dragging = True
                     self.omega = 0
+                elif reset_rect.collidepoint(event.pos):
+                    self.reset()
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.dragging = False
 
@@ -93,10 +102,17 @@ class PendulumSim:
         pygame.draw.line(self.screen, (0, 0, 0), self.origin, (bob_x, bob_y), 2)
         pygame.draw.circle(self.screen, (200, 0, 0), (int(bob_x), int(bob_y)), 20)
 
+        # Sliders
         self.speed_slider.draw(self.screen)
         self.resistance_slider.draw(self.screen)
 
-        text_surface = self.font.render("Press ESC to return to menu", True, (0, 0, 0))
-        self.screen.blit(text_surface, (10, 10))
+        # Reset button
+        reset_rect = pygame.Rect(700, 10, 80, 30)
+        pygame.draw.rect(self.screen, (220, 100, 100), reset_rect)
+        text = self.font.render("Reset", True, (255, 255, 255))
+        self.screen.blit(text, (reset_rect.x + 12, reset_rect.y + 5))
+
+        msg = self.font.render("Press ESC to return to menu", True, (0, 0, 0))
+        self.screen.blit(msg, (10, 10))
 
         pygame.display.flip()
