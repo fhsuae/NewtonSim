@@ -128,7 +128,17 @@ class SpringSim:
         pause_text = self.font.render("Pause" if not self.paused else "Play", True, (255, 255, 255))
         self.screen.blit(pause_text, (self.pause_rect.x + 10, self.pause_rect.y + 5))
 
+        # Energy display
+        KE = 0.5 * self.m * self.v ** 2
+        PE = 0.5 * self.k * self.pos ** 2
+        ke_text = self.font.render(f"KE: {KE:.2f} J", True, (0, 0, 0))
+        pe_text = self.font.render(f"PE: {PE:.2f} J", True, (0, 0, 0))
+        self.screen.blit(ke_text, (10, 40))
+        self.screen.blit(pe_text, (10, 70))
+
+        # Instructions
         msg = self.font.render("Press ESC to return to the menu.", True, (0, 0, 0))
         self.screen.blit(msg, (10, 10))
 
         pygame.display.flip()
+
