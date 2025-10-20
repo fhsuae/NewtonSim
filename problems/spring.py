@@ -42,6 +42,7 @@ class SpringSim:
 
         self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
         self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
+        self.mass_slider = Slider(550, 550, 200, 0.1, 5.0, 1.0, label="Mass")
 
         # Pause button
         self.paused = False
@@ -53,7 +54,7 @@ class SpringSim:
         self.pos = 100.0
         self.v = 0.0
         self.k = 20.0
-        self.m = 1.0
+        self.m = self.mass_slider.value
         self.dragging = False
 
     def run(self):
@@ -90,6 +91,8 @@ class SpringSim:
 
             self.speed_slider.handle_event(event)
             self.resistance_slider.handle_event(event)
+            self.mass_slider.handle_event(event)
+            self.m = self.mass_slider.value
 
         if self.dragging:
             self.pos = mouse_x - self.anchor[0] - self.rest_length
@@ -117,6 +120,7 @@ class SpringSim:
         # Sliders
         self.speed_slider.draw(self.screen)
         self.resistance_slider.draw(self.screen)
+        self.mass_slider.draw(self.screen)
 
         # Buttons
         reset_rect = pygame.Rect(700, 10, 80, 30)
@@ -141,4 +145,3 @@ class SpringSim:
         self.screen.blit(msg, (10, 10))
 
         pygame.display.flip()
-
