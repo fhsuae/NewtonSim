@@ -43,6 +43,10 @@ class SpringSim:
         self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
         self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
 
+        # Pause button
+        self.paused = False
+        self.pause_rect = pygame.Rect(600, 10, 80, 30)
+
         self.reset()
 
     def reset(self):
@@ -71,11 +75,16 @@ class SpringSim:
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                # Drag mass
                 if abs(mouse_x - mass_x) < self.mass_radius and abs(mouse_y - mass_y) < self.mass_radius:
                     self.dragging = True
                     self.v = 0
+                # Reset
                 elif reset_rect.collidepoint(event.pos):
                     self.reset()
+                # Pause/Play
+                elif self.pause_rect.collidepoint(event.pos):
+                    self.paused = not self.paused
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.dragging = False
 
@@ -86,6 +95,8 @@ class SpringSim:
             self.pos = mouse_x - self.anchor[0] - self.rest_length
 
     def update(self, dt):
+        if self.paused:
+            return
         dt *= self.speed_slider.value
         if not self.dragging:
             c = self.resistance_slider.value
@@ -96,19 +107,26 @@ class SpringSim:
     def draw(self):
         self.screen.fill((255, 255, 255))
 
+        # Spring
         pygame.draw.rect(self.screen, (120, 120, 120), (self.anchor[0] - 10, self.anchor[1] - 40, 20, 80))
         mass_x = int(self.anchor[0] + self.rest_length + self.pos)
         mass_y = self.anchor[1]
         pygame.draw.line(self.screen, (0, 0, 0), self.anchor, (mass_x, mass_y), 3)
         pygame.draw.circle(self.screen, (0, 100, 200), (mass_x, mass_y), self.mass_radius)
 
+        # Sliders
         self.speed_slider.draw(self.screen)
         self.resistance_slider.draw(self.screen)
 
+        # Buttons
         reset_rect = pygame.Rect(700, 10, 80, 30)
         pygame.draw.rect(self.screen, (220, 100, 100), reset_rect)
-        text = self.font.render("Reset", True, (255, 255, 255))
-        self.screen.blit(text, (reset_rect.x + 12, reset_rect.y + 5))
+        reset_text = self.font.render("Reset", True, (255, 255, 255))
+        self.screen.blit(reset_text, (reset_rect.x + 12, reset_rect.y + 5))
+
+        pygame.draw.rect(self.screen, (100, 220, 100), self.pause_rect)
+        pause_text = self.font.render("Pause" if not self.paused else "Play", True, (255, 255, 255))
+        self.screen.blit(pause_text, (self.pause_rect.x + 10, self.pause_rect.y + 5))
 
         msg = self.font.render("Press ESC to return to the menu.", True, (0, 0, 0))
         self.screen.blit(msg, (10, 10))

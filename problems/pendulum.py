@@ -39,9 +39,16 @@ class PendulumSim:
         self.origin = (400, 100)
         self.length = 200
         self.g = 9.81
+
+        # Sliders
         self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
         self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
         self.mass_slider = Slider(550, 550, 200, 0.1, 5.0, 1.0, label="Mass")
+
+        # Pause button
+        self.paused = False
+        self.pause_rect = pygame.Rect(600, 10, 80, 30)
+
         self.reset()
 
     def reset(self):
@@ -63,29 +70,40 @@ class PendulumSim:
         bob_x = self.origin[0] + self.length * math.sin(self.angle)
         bob_y = self.origin[1] + self.length * math.cos(self.angle)
         reset_rect = pygame.Rect(700, 10, 80, 30)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                # Drag bob
                 if math.hypot(mouse_x - bob_x, mouse_y - bob_y) < 20:
                     self.dragging = True
                     self.omega = 0
+                # Reset
                 elif reset_rect.collidepoint(event.pos):
                     self.reset()
+                # Pause/Play
+                elif self.pause_rect.collidepoint(event.pos):
+                    self.paused = not self.paused
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.dragging = False
+
+            # Sliders
             self.speed_slider.handle_event(event)
             self.resistance_slider.handle_event(event)
             self.mass_slider.handle_event(event)
             self.m = self.mass_slider.value
+
         if self.dragging:
             dx = mouse_x - self.origin[0]
             dy = mouse_y - self.origin[1]
             self.angle = math.atan2(dx, dy)
 
     def update(self, dt):
+        if self.paused:
+            return
         dt *= self.speed_slider.value
         timestep = 7.5
         if not self.dragging:
@@ -98,21 +116,34 @@ class PendulumSim:
         self.screen.fill((255, 255, 255))
         bob_x = self.origin[0] + self.length * math.sin(self.angle)
         bob_y = self.origin[1] + self.length * math.cos(self.angle)
+
+        # Pendulum
         pygame.draw.line(self.screen, (0, 0, 0), self.origin, (bob_x, bob_y), 2)
         pygame.draw.circle(self.screen, (200, 0, 0), (int(bob_x), int(bob_y)), 20)
+
+        # Sliders
         self.speed_slider.draw(self.screen)
         self.resistance_slider.draw(self.screen)
         self.mass_slider.draw(self.screen)
+
+        # Buttons
         reset_rect = pygame.Rect(700, 10, 80, 30)
         pygame.draw.rect(self.screen, (220, 100, 100), reset_rect)
-        text = self.font.render("Reset", True, (255, 255, 255))
-        self.screen.blit(text, (reset_rect.x + 12, reset_rect.y + 5))
+        reset_text = self.font.render("Reset", True, (255, 255, 255))
+        self.screen.blit(reset_text, (reset_rect.x + 12, reset_rect.y + 5))
+
+        pygame.draw.rect(self.screen, (100, 220, 100), self.pause_rect)
+        pause_text = self.font.render("Pause" if not self.paused else "Play", True, (255, 255, 255))
+        self.screen.blit(pause_text, (self.pause_rect.x + 10, self.pause_rect.y + 5))
+
+        # Energy display
         KE = 0.5 * self.m * (self.omega * self.length)**2
         PE = self.m * self.g * self.length * (1 - math.cos(self.angle))
-        ke_text = self.font.render(f"KE: {KE:.2f} J", True, (0, 0, 0))
-        pe_text = self.font.render(f"PE: {PE:.2f} J", True, (0, 0, 0))
-        self.screen.blit(ke_text, (10, 40))
-        self.screen.blit(pe_text, (10, 70))
+        self.screen.blit(self.font.render(f"KE: {KE:.2f} J", True, (0, 0, 0)), (10, 40))
+        self.screen.blit(self.font.render(f"PE: {PE:.2f} J", True, (0, 0, 0)), (10, 70))
+
+        # Instructions
         msg = self.font.render("Press ESC to return to menu", True, (0, 0, 0))
         self.screen.blit(msg, (10, 10))
+
         pygame.display.flip()
