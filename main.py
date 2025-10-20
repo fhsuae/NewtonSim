@@ -2,6 +2,7 @@ import pygame
 from menu import Menu
 from problems.pendulum import PendulumSim
 from problems.spring import SpringSim
+from problems.wave import WaveSim
 
 def main():
     pygame.init()
@@ -19,10 +20,14 @@ def main():
         elif choice == "spring":
             sim = SpringSim(screen)
             sim.run()
+        elif choice == "wave":
+            sim = WaveSim()
+            sim.run()
         elif choice == "quit":
             running = False
 
     pygame.quit()
+
 
 if __name__ == "__main__":
     main()

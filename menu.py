@@ -12,14 +12,12 @@ class Button:
         self.hovered = False
 
     def draw(self, screen):
-        #  color transtion
         target_color = self.hover_color if self.hovered else self.bg_color
         self.current_color = tuple(
             int(self.current_color[i] + (target_color[i] - self.current_color[i]) * 0.2)
             for i in range(3)
         )
 
-        #  Size increase when hovered
         scale = 1.1 if self.hovered else 1.0
         scaled_rect = self.rect.copy()
         scaled_rect.width = int(self.rect.width * scale)
@@ -49,9 +47,11 @@ class Menu:
         self.screen = screen
         self.font = pygame.font.SysFont("Arial", 36)
 
-        self.pendulum_button = Button((300, 220, 200, 60), "Pendulum", self.font)
-        self.spring_button   = Button((300, 300, 200, 60), "Spring",   self.font)
-        self.quit_button     = Button((300, 380, 200, 60), "Quit",     self.font)
+        # Buttons
+        self.pendulum_button = Button((300, 180, 200, 60), "Pendulum", self.font)
+        self.spring_button   = Button((300, 260, 200, 60), "Spring",   self.font)
+        self.wave_button     = Button((300, 340, 200, 60), "Wave",     self.font)
+        self.quit_button     = Button((300, 420, 200, 60), "Quit",     self.font)
 
     def run(self):
         while True:
@@ -62,10 +62,12 @@ class Menu:
             mouse_pos = pygame.mouse.get_pos()
             self.pendulum_button.update_hover(mouse_pos)
             self.spring_button.update_hover(mouse_pos)
+            self.wave_button.update_hover(mouse_pos)
             self.quit_button.update_hover(mouse_pos)
 
             self.pendulum_button.draw(self.screen)
             self.spring_button.draw(self.screen)
+            self.wave_button.draw(self.screen)
             self.quit_button.draw(self.screen)
 
             pygame.display.flip()
@@ -77,5 +79,7 @@ class Menu:
                     return "pendulum"
                 if self.spring_button.is_clicked(event):
                     return "spring"
+                if self.wave_button.is_clicked(event):
+                    return "wave"
                 if self.quit_button.is_clicked(event):
                     return "quit"
