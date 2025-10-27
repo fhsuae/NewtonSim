@@ -40,9 +40,10 @@ class SpringSim:
         self.mass_radius = 20
         self.font = pygame.font.SysFont("Arial", 18)
 
-        self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, label="Speed")
-        self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
-        self.mass_slider = Slider(550, 550, 200, 0.1, 5.0, 1.0, label="Mass")
+        # Sliders
+        self.speed_slider = Slider(50, 550, 200, 0.1, 2.0, 1.0, "Speed")
+        self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, "Resistance")
+        self.mass_slider = Slider(550, 550, 200, 0.1, 5.0, 1.0, "Mass")
 
         # Pause button
         self.paused = False
@@ -89,6 +90,7 @@ class SpringSim:
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.dragging = False
 
+            # Handle sliders
             self.speed_slider.handle_event(event)
             self.resistance_slider.handle_event(event)
             self.mass_slider.handle_event(event)
@@ -110,38 +112,33 @@ class SpringSim:
     def draw(self):
         self.screen.fill((255, 255, 255))
 
-        # Spring
+        # Draw spring and mass
         pygame.draw.rect(self.screen, (120, 120, 120), (self.anchor[0] - 10, self.anchor[1] - 40, 20, 80))
         mass_x = int(self.anchor[0] + self.rest_length + self.pos)
         mass_y = self.anchor[1]
         pygame.draw.line(self.screen, (0, 0, 0), self.anchor, (mass_x, mass_y), 3)
         pygame.draw.circle(self.screen, (0, 100, 200), (mass_x, mass_y), self.mass_radius)
 
-        # Sliders
+        # Draw sliders
         self.speed_slider.draw(self.screen)
         self.resistance_slider.draw(self.screen)
         self.mass_slider.draw(self.screen)
 
-        # Buttons
+        # Draw buttons
         reset_rect = pygame.Rect(700, 10, 80, 30)
         pygame.draw.rect(self.screen, (220, 100, 100), reset_rect)
-        reset_text = self.font.render("Reset", True, (255, 255, 255))
-        self.screen.blit(reset_text, (reset_rect.x + 12, reset_rect.y + 5))
+        self.screen.blit(self.font.render("Reset", True, (255, 255, 255)), (reset_rect.x + 12, reset_rect.y + 5))
 
         pygame.draw.rect(self.screen, (100, 220, 100), self.pause_rect)
-        pause_text = self.font.render("Pause" if not self.paused else "Play", True, (255, 255, 255))
-        self.screen.blit(pause_text, (self.pause_rect.x + 10, self.pause_rect.y + 5))
+        self.screen.blit(self.font.render("Pause" if not self.paused else "Play", True, (255, 255, 255)),
+                         (self.pause_rect.x + 10, self.pause_rect.y + 5))
 
-        # Energy display
+        # Display energy
         KE = 0.5 * self.m * self.v ** 2
         PE = 0.5 * self.k * self.pos ** 2
-        ke_text = self.font.render(f"KE: {KE:.2f} J", True, (0, 0, 0))
-        pe_text = self.font.render(f"PE: {PE:.2f} J", True, (0, 0, 0))
-        self.screen.blit(ke_text, (10, 40))
-        self.screen.blit(pe_text, (10, 70))
+        self.screen.blit(self.font.render(f"KE: {KE:.2f} J", True, (0, 0, 0)), (10, 40))
+        self.screen.blit(self.font.render(f"PE: {PE:.2f} J", True, (0, 0, 0)), (10, 70))
 
         # Instructions
-        msg = self.font.render("Press ESC to return to the menu.", True, (0, 0, 0))
-        self.screen.blit(msg, (10, 10))
-
+        self.screen.blit(self.font.render("Press ESC to return to the menu.", True, (0, 0, 0)), (10, 10))
         pygame.display.flip()
