@@ -1,9 +1,14 @@
 import pygame
 
 class QuestionWindow:
-    def __init__(self, question, correct_answer):
+    def __init__(self, question, correct_answer, screen=None):
         pygame.init()
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)  # fullscreen
+        # Use provided screen or create fullscreen
+        if screen is None:
+            self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        else:
+            self.screen = screen
+
         self.screen_width = self.screen.get_width()
         self.screen_height = self.screen.get_height()
 
