@@ -10,6 +10,13 @@ import math
 
 def main():
     pygame.init()
+
+    try:
+        icon = pygame.image.load("assets/icons/NewtonSim Icon.jpg")
+        pygame.display.set_icon(icon)
+    except Exception as e:
+        print(f"Warning: Could not load icon ({e})")
+
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Physics Simulator")
 
@@ -33,7 +40,6 @@ def main():
                 sim = PendulumSim(screen)
                 sim.run()
 
-                # Show explanation
                 exp_win = ExplanationWindow(explanation, screen)
                 exp_win.run()
 
