@@ -79,11 +79,27 @@ Alexander Escobedo
 * 0.1
     * Initial Release
  
+## Screenshots: 
 
- 
+Menu Screen
+![Main Screen](assets/images/menuwindow.png)
+
+Pendulum Simulation
+![Main Screen](assets/images/pendulumsimulation.png) 
+
+Spring Simulation
+![Main Screen](assets/images/springsimulation.png)
+
+
+Wave Simulation
+![Main Screen](assets/images/wavesimulation.png)
+
+Quiz Window 
+![Main Screen](assets/images/quizwindow.png)
+
+
 ## Acknowledgments
- 
-Inspiration, code snippets, etc.
+
 
 Programming:
 * [Pygame Documentation](https://www.pygame.org/docs/)
@@ -99,8 +115,3 @@ Inspiration:
 * [Animate Dynamics of Cart-Pendulum System in Python by Using Pygame](https://github.com/AleksandarHaber/Simulation-and-Animation-of-Cart-Pole-State-Space-Model-in-Python-and-Pygame)
 
 
-## Screenshots: 
-
-
-![Main Screen](assets/images/pendulum_question.png)
-![Main Screen](assets/images/pendulum_image.png) 
