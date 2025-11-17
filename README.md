@@ -8,53 +8,78 @@ NewtonSim
 
 ## Description
  
-An interactive physics simulator for learning classical mechanics concepts.
- 
+NewtonSim is an interactive physics simulator for classical mechanics. It includes basic physics problems like  pendulum, spring, and wave simulations with adjustable sliders, integrated quizzes and explanations.
+## Features
+* Interactive pendulum, spring, and wave simulations
+* Adjustable sliders for simulation parameters (speed, mass, amplitude, resistance)
+* Integrated quiz questions with hints before simulations
+* Detailed explanation windows following quiz attempts
+* Persistent background menu visible during simulations
+* Fullscreen mode for immersive experience
+* Pause and reset buttons in simulations for better control
+* Return to menu using ESC key
+
+
 ## Getting Started
+
+
 ### Dependencies
 
-Please install the pip requirements:
+Before running the project, ensure you have:
+* Python 3.7+
+* pygame (installed via requirements.txt)
+
+## Installing
+Clone the repository:
+```
+git clone https://github.com/fhsuae/NewtonSim.git
+```
+Create and activate a virtual environment:
+
+Windows:
 
 ```
- pip install -r requirements.txt
+python -m venv venv
+venv\Scripts\activate
 ```
-### Installing
- 
-* How/where to download your program
-* Any modifications needed to be made to files/folders
+macOS/Linux:
+```
+python3 -m venv venv
+source venv/bin/activate
+```
+Install dependencies:
+
+```
+pip install -r requirements.txt
+```
+
  
 ### Executing program
- 
+Run the main program:
 
 ```
 python main.py
 ```
- 
-## Help
- 
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
- 
+> The program will start in fullscreen mode. Use the menu to select simulations or quit.
+
+## Usage 
+
+* Use mouse to navigate menu and interact with sliders.
+* Answer quiz questions correctly to access simulations.
+* Use sliders to adjust simulation parameters dynamically.
+* Use Reset buttons in simulations to restart.
+* Press ESC anytime to return to the main menu.
+
 ## Authors
  
-Contributors names and contact info
- 
-ex. Dominique Pizzie  
-ex. [@DomPizzie](https://twitter.com/dompizzie)
+Alexander Escobedo 
  
 ## Version History
- 
-* 0.2
-    * Various bug fixes and optimizations
-    * See [commit change]() or See [release history]()
+
 * 0.1
     * Initial Release
  
-## License
- 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
+
  
 ## Acknowledgments
  
