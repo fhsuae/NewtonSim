@@ -47,11 +47,15 @@ class Menu:
         self.screen = screen
         self.font = pygame.font.SysFont("Arial", 36)
 
-        # Buttons
-        self.pendulum_button = Button((300, 180, 200, 60), "Pendulum", self.font)
-        self.spring_button   = Button((300, 260, 200, 60), "Spring",   self.font)
-        self.wave_button     = Button((300, 340, 200, 60), "Wave",     self.font)
-        self.quit_button     = Button((300, 420, 200, 60), "Quit",     self.font)
+        # Dynamically center buttons vertically and horizontally in fullscreen
+        screen_rect = screen.get_rect()
+        button_width, button_height = 200, 60
+        start_y = screen_rect.centery - 120  # approx vertical center minus offset
+
+        self.pendulum_button = Button((screen_rect.centerx - button_width//2, start_y, button_width, button_height), "Pendulum", self.font)
+        self.spring_button   = Button((screen_rect.centerx - button_width//2, start_y + 80, button_width, button_height), "Spring", self.font)
+        self.wave_button     = Button((screen_rect.centerx - button_width//2, start_y + 160, button_width, button_height), "Wave", self.font)
+        self.quit_button     = Button((screen_rect.centerx - button_width//2, start_y + 240, button_width, button_height), "Quit", self.font)
 
         self.clicked_button = None
 
@@ -78,7 +82,8 @@ class Menu:
     def draw(self):
         self.screen.fill((200, 200, 200))
         title = self.font.render("Physics Simulator", True, (0, 0, 0))
-        self.screen.blit(title, (250, 100))
+        title_rect = title.get_rect(center=(self.screen.get_rect().centerx, 100))
+        self.screen.blit(title, title_rect)
 
         self.pendulum_button.draw(self.screen)
         self.spring_button.draw(self.screen)
@@ -86,7 +91,8 @@ class Menu:
         self.quit_button.draw(self.screen)
 
     def draw_background(self):
-        # Only draw the background and title (no buttons)
+        # Draw only background and title so menu stays visible behind other windows
         self.screen.fill((200, 200, 200))
         title = self.font.render("Physics Simulator", True, (0, 0, 0))
-        self.screen.blit(title, (250, 100))
+        title_rect = title.get_rect(center=(self.screen.get_rect().centerx, 100))
+        self.screen.blit(title, title_rect)

@@ -45,6 +45,11 @@ class PendulumSim:
         self.resistance_slider = Slider(300, 550, 200, 0.0, 2.0, 0.1, label="Resistance")
         self.mass_slider = Slider(550, 550, 200, 0.1, 5.0, 1.0, label="Mass")
 
+        # Pause and Reset buttons
+        self.pause_rect = pygame.Rect(600, 10, 80, 30)
+        self.reset_rect = pygame.Rect(700, 10, 80, 30)
+        self.paused = False
+
         self.reset()
 
     def reset(self):
@@ -53,13 +58,15 @@ class PendulumSim:
         self.alpha = 0
         self.dragging = False
         self.m = self.mass_slider.value
+        self.paused = False
 
     def run(self):
         dt = self.clock.tick(60) / 1000.0
         self.handle_events()
         if not self.running:
             return False
-        self.update(dt)
+        if not self.paused:
+            self.update(dt)
         self.draw()
         return True
 
@@ -67,7 +74,6 @@ class PendulumSim:
         mouse_x, mouse_y = pygame.mouse.get_pos()
         bob_x = self.origin[0] + self.length * math.sin(self.angle)
         bob_y = self.origin[1] + self.length * math.cos(self.angle)
-        reset_rect = pygame.Rect(700, 10, 80, 30)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -78,8 +84,10 @@ class PendulumSim:
                 if math.hypot(mouse_x - bob_x, mouse_y - bob_y) < 20:
                     self.dragging = True
                     self.omega = 0
-                elif reset_rect.collidepoint(event.pos):
+                elif self.reset_rect.collidepoint(event.pos):
                     self.reset()
+                elif self.pause_rect.collidepoint(event.pos):
+                    self.paused = not self.paused
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.dragging = False
@@ -114,10 +122,16 @@ class PendulumSim:
         self.resistance_slider.draw(self.screen)
         self.mass_slider.draw(self.screen)
 
-        reset_rect = pygame.Rect(700, 10, 80, 30)
-        pygame.draw.rect(self.screen, (220, 100, 100), reset_rect)
-        text = self.font.render("Reset", True, (255, 255, 255))
-        self.screen.blit(text, (reset_rect.x + 12, reset_rect.y + 5))
+        # Draw pause button
+        pygame.draw.rect(self.screen, (100, 100, 220), self.pause_rect)
+        pause_text = "Pause" if not self.paused else "Play"
+        text = self.font.render(pause_text, True, (255, 255, 255))
+        self.screen.blit(text, (self.pause_rect.x + 10, self.pause_rect.y + 5))
+
+        # Draw reset button
+        pygame.draw.rect(self.screen, (220, 100, 100), self.reset_rect)
+        reset_text = self.font.render("Reset", True, (255, 255, 255))
+        self.screen.blit(reset_text, (self.reset_rect.x + 12, self.reset_rect.y + 5))
 
         # Display KE and PE
         KE = 0.5 * self.m * (self.omega * self.length) ** 2

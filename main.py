@@ -16,8 +16,10 @@ def main():
     except Exception as e:
         print(f"Warning: Could not load icon ({e})")
 
-    screen = pygame.display.set_mode((800, 600))
+    # Set fullscreen display mode
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Physics Simulator")
+    screen_rect = screen.get_rect()
 
     menu = Menu(screen)
     clock = pygame.time.Clock()
@@ -29,17 +31,28 @@ def main():
     explanation_window = None
     simulation = None
 
-    question_result = None  # store Option A results
+    question_result = None
 
     while running:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    # ESC quits simulation and goes back to menu if not already there
+                    if state != "menu":
+                        state = "menu"
+                        simulation = None
+                        question_window = None
+                        explanation_window = None
+                    else:
+                        running = False
 
-        # Always draw menu background if you want
+        # Always draw menu background first so it stays in the background
+        menu.draw_background()
+
         if state == "menu":
-            menu.draw_background()
             menu.update(events)
             menu.draw()
             pygame.display.flip()
@@ -101,26 +114,30 @@ def main():
                 state = "question"
 
         elif state == "question":
-            question_result = question_window.run()
+            if question_window:
+                question_result = question_window.run()
 
-            if question_result["closed"]:
-                state = "menu"
-                continue
+                if question_result["closed"]:
+                    state = "menu"
+                    question_window = None
+                    continue
 
-            if question_result["correct"]:
-                state = "simulation"
-            else:
-                if question_result["attempts_exceeded"]:
-                    state = "explanation"
+                if question_result["correct"]:
+                    state = "simulation"
                 else:
-                    state = "question"
+                    if question_result["attempts_exceeded"]:
+                        state = "explanation"
+                    else:
+                        state = "question"
 
         elif state == "explanation":
-            exited_normally = explanation_window.run()
-            if not exited_normally:
-                state = "menu"
-            else:
-                state = "simulation"
+            if explanation_window:
+                exited_normally = explanation_window.run()
+                if not exited_normally:
+                    state = "menu"
+                    explanation_window = None
+                else:
+                    state = "simulation"
 
         elif state == "simulation":
             if simulation is None:
@@ -139,6 +156,7 @@ def main():
                     simulation = None
                     state = "menu"
 
+        pygame.display.flip()
         clock.tick(60)
 
     pygame.quit()
