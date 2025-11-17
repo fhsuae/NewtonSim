@@ -59,11 +59,13 @@ class SpringSim:
         self.dragging = False
 
     def run(self):
-        while self.running:
-            dt = self.clock.tick(60) / 1000.0
-            self.handle_events()
-            self.update(dt)
-            self.draw()
+        dt = self.clock.tick(60) / 1000.0
+        self.handle_events()
+        if not self.running:
+            return False
+        self.update(dt)
+        self.draw()
+        return True
 
     def handle_events(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()

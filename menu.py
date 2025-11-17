@@ -53,33 +53,40 @@ class Menu:
         self.wave_button     = Button((300, 340, 200, 60), "Wave",     self.font)
         self.quit_button     = Button((300, 420, 200, 60), "Quit",     self.font)
 
-    def run(self):
-        while True:
-            self.screen.fill((200, 200, 200))
-            title = self.font.render("Physics Simulator", True, (0, 0, 0))
-            self.screen.blit(title, (250, 100))
+        self.clicked_button = None
 
-            mouse_pos = pygame.mouse.get_pos()
-            self.pendulum_button.update_hover(mouse_pos)
-            self.spring_button.update_hover(mouse_pos)
-            self.wave_button.update_hover(mouse_pos)
-            self.quit_button.update_hover(mouse_pos)
+    def update(self, events):
+        mouse_pos = pygame.mouse.get_pos()
+        self.pendulum_button.update_hover(mouse_pos)
+        self.spring_button.update_hover(mouse_pos)
+        self.wave_button.update_hover(mouse_pos)
+        self.quit_button.update_hover(mouse_pos)
 
-            self.pendulum_button.draw(self.screen)
-            self.spring_button.draw(self.screen)
-            self.wave_button.draw(self.screen)
-            self.quit_button.draw(self.screen)
+        self.clicked_button = None
+        for event in events:
+            if event.type == pygame.QUIT:
+                self.clicked_button = "quit"
+            if self.pendulum_button.is_clicked(event):
+                self.clicked_button = "pendulum"
+            if self.spring_button.is_clicked(event):
+                self.clicked_button = "spring"
+            if self.wave_button.is_clicked(event):
+                self.clicked_button = "wave"
+            if self.quit_button.is_clicked(event):
+                self.clicked_button = "quit"
 
-            pygame.display.flip()
+    def draw(self):
+        self.screen.fill((200, 200, 200))
+        title = self.font.render("Physics Simulator", True, (0, 0, 0))
+        self.screen.blit(title, (250, 100))
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return "quit"
-                if self.pendulum_button.is_clicked(event):
-                    return "pendulum"
-                if self.spring_button.is_clicked(event):
-                    return "spring"
-                if self.wave_button.is_clicked(event):
-                    return "wave"
-                if self.quit_button.is_clicked(event):
-                    return "quit"
+        self.pendulum_button.draw(self.screen)
+        self.spring_button.draw(self.screen)
+        self.wave_button.draw(self.screen)
+        self.quit_button.draw(self.screen)
+
+    def draw_background(self):
+        # Only draw the background and title (no buttons)
+        self.screen.fill((200, 200, 200))
+        title = self.font.render("Physics Simulator", True, (0, 0, 0))
+        self.screen.blit(title, (250, 100))

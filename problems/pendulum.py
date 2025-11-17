@@ -55,11 +55,13 @@ class PendulumSim:
         self.m = self.mass_slider.value
 
     def run(self):
-        while self.running:
-            dt = self.clock.tick(60) / 1000.0
-            self.handle_events()
-            self.update(dt)
-            self.draw()
+        dt = self.clock.tick(60) / 1000.0
+        self.handle_events()
+        if not self.running:
+            return False
+        self.update(dt)
+        self.draw()
+        return True
 
     def handle_events(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -118,7 +120,7 @@ class PendulumSim:
         self.screen.blit(text, (reset_rect.x + 12, reset_rect.y + 5))
 
         # Display KE and PE
-        KE = 0.5 * self.m * (self.omega * self.length)**2
+        KE = 0.5 * self.m * (self.omega * self.length) ** 2
         PE = self.m * self.g * self.length * (1 - math.cos(self.angle))
         ke_text = self.font.render(f"KE: {KE:.2f} J", True, (0, 0, 0))
         pe_text = self.font.render(f"PE: {PE:.2f} J", True, (0, 0, 0))

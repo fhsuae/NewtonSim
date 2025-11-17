@@ -44,25 +44,25 @@ class WaveSim:
         # Pause button
         self.pause_rect = pygame.Rect(650, 10, 100, 30)
 
+        self.running = True  # Added to track running state
+
     def run(self):
-        running = True
-        while running:
-            dt = self.clock.tick(60) / 1000
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN and self.pause_rect.collidepoint(event.pos):
-                    self.paused = not self.paused
+        dt = self.clock.tick(60) / 1000
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.pause_rect.collidepoint(event.pos):
+                self.paused = not self.paused
 
-                self.speed_slider.handle_event(event)
-                self.amp_slider.handle_event(event)
+            self.speed_slider.handle_event(event)
+            self.amp_slider.handle_event(event)
 
-            if not self.paused:
-                self.update(dt)
-            self.draw()
-
+        if not self.paused:
+            self.update(dt)
+        self.draw()
+        return self.running
     def update(self, dt):
         self.time += dt * self.speed_slider.value * 5
 
